@@ -26,7 +26,7 @@ while cv2.getWindowProperty("Z project", cv2.WND_PROP_VISIBLE) > 0:
         IminusBG = []
         I_point = []
         I_BG = []
-        print("I in main", window.I)
+        print("I in main")
 
         for img_for in stack:
             I_point_temp = np.array([])
@@ -42,36 +42,14 @@ while cv2.getWindowProperty("Z project", cv2.WND_PROP_VISIBLE) > 0:
         IminusBG_arr = np.stack(IminusBG, axis=1)
         I_point_arr = np.stack(I_point, axis=1)
         I_BG_arr = np.stack(I_BG, axis=1)
-        print("I-BG, ", IminusBG_arr, " shape ", IminusBG_arr.shape)
+
+        tau, I0 = processing.draw_results_and_param(IminusBG_arr, I_point_arr, I_BG_arr)
+        print("tau, I0", tau, I0)
 
 
-
-        # num_of_points = IminusBG_arr.shape[1]
-        t = np.linspace(0, IminusBG_arr.shape[1], IminusBG_arr.shape[1])
-
-
-
-        # for i in range(IminusBG_arr.shape[0]):
-        #     plt.plot(t, IminusBG_arr[i], label=str(i))
-        # plt.xlabel('frames, x ms')
-        # plt.ylabel('I(point) - I(BG)')
-        # plt.title("Signal to noise from time")
-        # plt.legend()
-        # plt.show()
-        for i in range(IminusBG_arr.shape[0]):
-            IminusBG_arr[i] = processing.smoothing(IminusBG_arr[i], 1)
-            I_point_arr[i] = processing.smoothing(I_point_arr[i], 0)
-            I_BG_arr[i] = processing.smoothing(I_BG_arr[i],  0)
-
-            fig, ax = plt.subplots()
-            ax.plot(t, IminusBG_arr[i], label="I(point) - I(BG) " + str(i+1))
-            ax.plot(t, I_point_arr[i], label="Point " + str(i + 1))
-            ax.plot(t, I_BG_arr[i], label="BG " + str(i + 1))
-            ax.set_xlabel('frames, x ms')
-            ax.set_ylabel('I')
-            ax.set_title("Signal to noise from time for №" + str(i+1) + " point")
-            ax.legend()
+        np.savetxt('test.txt', (tau, I0))
         plt.show()
+
 
             # for I in IminusBG_arr:
             #     processing.hist(I)

@@ -9,8 +9,8 @@ import ctypes  # An included library with Python install.
 def Mbox(title, text, style):
     return ctypes.windll.user32.MessageBoxW(0, text, title, style)
 
-message = "    To highlight a point, press it with a double click.\n    Once you select a point, click next to the background to compare the intensity for it.\n    You can select several points. Do not forget for all of them to select a pair with background immediately.\n    After you have selected all the points, press the Enter for further processing."
-# Mbox('Program usage rules', message, 1)
+message = "    To highlight a microtube, double click on one of its ends\n and then double click on the other.\n You can also highlight another MT.\n Press Enter for further processing."
+Mbox('Program usage rules', message, 1)
 
 SELECT = 0
 screen = get_monitors()
@@ -34,10 +34,7 @@ def mouse_action(event, x, y, flags, param):
         if crds_tmp.shape[0] == 2:
             crds_tmp = np.append(crds_tmp, [x, y])
             crds = np.append(crds, [x, y])
-            print("crds_tmp", crds_tmp)
-            print("crds", crds)
             x3, y3, x4, y4, ang, M = get_crds(crds_tmp)
-            print("x, y", x3, y3, x4, y4)
             img_rotated = cv2.warpAffine(img, M, (img_ori_w, img_ori_h))
             # cv2.imshow("Rotated by 45 Degrees", rotated)
             selected_img = img_rotated[y3:y4, x3:x4].copy()
@@ -49,9 +46,7 @@ def mouse_action(event, x, y, flags, param):
 
             # cv2.rectangle(selected_img, (0, 0), (8, 8), (255, 255, 255), 1)
             I = np.append(I, calculate_I(selected_img))
-            print("III", I)
             crds_tmp = np.array([])
-            print("cc", crds_tmp)
 
             cv2.imshow("Img rotated " + str(i), img_rotated)
 
@@ -60,7 +55,6 @@ def mouse_action(event, x, y, flags, param):
         else:
             crds_tmp = np.append(crds_tmp, [x, y])  # save click coordinates
             crds = np.append(crds, [x, y])
-            print("crds_tmp", crds_tmp)
     cv2.imshow("Z project", img)
 
 def calculate_I(sel_img):
@@ -68,7 +62,6 @@ def calculate_I(sel_img):
     for i in range(sel_img.shape[0]):
         for j in range(sel_img.shape[1]):
             Intens += 0.299 * sel_img[i, j, 2] + 0.587 * sel_img[i, j, 1] + 0.114 * sel_img[i, j, 0]
-    print("sel img shape", sel_img.shape)
     return round(Intens / sel_img.shape[1])
 
 def get_crds(crds_tmp):
