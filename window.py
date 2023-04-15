@@ -22,36 +22,45 @@ for monitor in get_monitors():
 
     print(str(work_area[0]) + 'x' + str(work_area[1]))
 
+crds_tmp = np.array([])
 crds = np.array([])
 i=1
+M = np.array([])
 
 def mouse_action(event, x, y, flags, param):
-    global crds, img, selected_img, union_img, img_ori, SELECT, I, i
+    global crds, crds_tmp, img, selected_img, union_img, img_ori, SELECT, I, i, M
 
     if event == cv2.EVENT_LBUTTONDBLCLK:
-        if crds.shape[0] == 2:
+        if crds_tmp.shape[0] == 2:
+            crds_tmp = np.append(crds_tmp, [x, y])
             crds = np.append(crds, [x, y])
+            print("crds_tmp", crds_tmp)
             print("crds", crds)
-            x3, y3, x4, y4, ang, M = get_crds(crds)
+            x3, y3, x4, y4, ang, M = get_crds(crds_tmp)
             print("x, y", x3, y3, x4, y4)
-            img = cv2.warpAffine(img, M, (img_ori_w, img_ori_h))
+            img_rotated = cv2.warpAffine(img, M, (img_ori_w, img_ori_h))
             # cv2.imshow("Rotated by 45 Degrees", rotated)
-            selected_img = img[y3:y4, x3:x4].copy()
+            selected_img = img_rotated[y3:y4, x3:x4].copy()
 
-            cv2.rectangle(img, (x3, y3), (x4, y4), (255, 255, 0), 1)#draw rectangle on full img
+            cv2.rectangle(img_rotated, (x3, y3), (x4, y4), (255, 255, 0), 1)#draw rectangle on full img
 
             #copy selected area with extension so that the frame does not overlap data
             cv2.imshow("Selected Image "+ str(i), selected_img)
-            i+=1
+
             # cv2.rectangle(selected_img, (0, 0), (8, 8), (255, 255, 255), 1)
             I = np.append(I, calculate_I(selected_img))
             print("III", I)
-            crds = np.array([])
-            print("cc", crds)
+            crds_tmp = np.array([])
+            print("cc", crds_tmp)
+
+            cv2.imshow("Img rotated " + str(i), img_rotated)
+
+            i += 1
 
         else:
-            crds = np.append(crds, [x, y])  # save click coordinates
-            print("crds", crds)
+            crds_tmp = np.append(crds_tmp, [x, y])  # save click coordinates
+            crds = np.append(crds, [x, y])
+            print("crds_tmp", crds_tmp)
     cv2.imshow("Z project", img)
 
 def calculate_I(sel_img):
@@ -62,8 +71,8 @@ def calculate_I(sel_img):
     print("sel img shape", sel_img.shape)
     return round(Intens / sel_img.shape[1])
 
-def get_crds(crds):
-    x1, y1, x2, y2 = crds
+def get_crds(crds_tmp):
+    x1, y1, x2, y2 = crds_tmp
     l = math.sqrt((x1-x2)**2 + (y1-y2)**2)
 
     # for i in range(3):
@@ -108,3 +117,5 @@ I = np.array([])
 
 
 cv2.setMouseCallback('Z project', mouse_action)
+
+
