@@ -74,13 +74,13 @@ def draw_results_and_param(IminusBG_arr, I_point_arr, I_BG_arr):
         I0 = np.append(I0, param_I)
 
         fig, ax = plt.subplots()
-        ax.plot(t, IminusBG_arr[i], label="I(point) - I(BG) " + str(i + 1))
-        ax.plot(t, I_point_arr[i], label="Point " + str(i + 1))
+        ax.plot(t, IminusBG_arr[i], label="I(MT) - I(BG) " + str(i + 1))
+        ax.plot(t, I_point_arr[i], label="MT " + str(i + 1))
         ax.plot(t, I_BG_arr[i], label="BG " + str(i + 1))
-        ax.plot(t, exp_fit(t, param_I, param_t), label='Gaussian fit')
+        ax.plot(t, exp_fit(t, param_I, param_t), label='Exp fit')
         ax.set_xlabel('frames, x ms')
         ax.set_ylabel('I')
-        ax.set_title("Signal to noise from time for №" + str(i + 1) + " point")
+        ax.set_title("Signal to noise from time for №" + str(i + 1) + " MT")
         ax.legend()
 
     return tau, I0
