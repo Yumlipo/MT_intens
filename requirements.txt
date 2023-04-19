@@ -1,0 +1,65 @@
+appdirs==1.4.4
+Bottleneck @ file:///C:/Windows/Temp/abs_3198ca53-903d-42fd-87b4-03e6d03a8381yfwsuve8/croots/recipe/bottleneck_1657175565403/work
+brotlipy==0.7.0
+certifi==2022.12.7
+cffi @ file:///C:/b/abs_49n3v2hyhr/croot/cffi_1670423218144/work
+charset-normalizer==3.1.0
+click==8.1.3
+cloudpickle==2.2.1
+colorama==0.4.6
+contourpy==1.0.7
+cryptography @ file:///C:/b/abs_8ecplyc3n2/croot/cryptography_1677533105000/work
+cycler @ file:///tmp/build/80754af9/cycler_1637851556182/work
+dask==2023.3.1
+fonttools==4.39.2
+fsspec==2023.3.0
+idna @ file:///C:/b/abs_bdhbebrioa/croot/idna_1666125572046/work
+imagecodecs @ file:///C:/b/abs_f0cr12h73p/croot/imagecodecs_1677576746499/work
+imageio @ file:///home/conda/feedstock_root/build_artifacts/imageio_1677507485990/work
+Jinja2 @ file:///home/conda/feedstock_root/build_artifacts/jinja2_1654302431367/work
+kiwisolver @ file:///C:/b/abs_88mdhvtahm/croot/kiwisolver_1672387921783/work
+locket==1.0.0
+MarkupSafe @ file:///C:/ci/markupsafe_1654508036328/work
+matplotlib @ file:///C:/b/abs_999d_v8_lh/croot/matplotlib-suite_1678723900840/work
+mkl-fft==1.3.1
+mkl-random @ file:///C:/ci_310/mkl_random_1643050563308/work
+mkl-service==2.4.0
+munkres==1.1.4
+nd2==0.5.3
+nd2reader @ file:///home/conda/feedstock_root/build_artifacts/nd2reader_1619274851377/work
+numexpr @ file:///C:/b/abs_a7kbak88hk/croot/numexpr_1668713882979/work
+numpy==1.24.2
+packaging @ file:///C:/b/abs_ed_kb9w6g4/croot/packaging_1678965418855/work
+pandas @ file:///C:/b/abs_b9kefbuby2/croot/pandas_1677835593760/work
+partd==1.3.0
+Pillow==9.4.0
+PIMS @ file:///home/conda/feedstock_root/build_artifacts/pims_1653786845159/work
+ply==3.11
+pooch @ file:///tmp/build/80754af9/pooch_1623324770023/work
+pycparser @ file:///tmp/build/80754af9/pycparser_1636541352034/work
+pyOpenSSL @ file:///C:/b/abs_552w85x1jz/croot/pyopenssl_1677607703691/work
+pyparsing @ file:///C:/Users/BUILDE~1/AppData/Local/Temp/abs_7f_7lba6rl/croots/recipe/pyparsing_1661452540662/work
+PyQt5==5.15.7
+PyQt5-sip @ file:///C:/Windows/Temp/abs_d7gmd2jg8i/croots/recipe/pyqt-split_1659273064801/work/pyqt_sip
+PySocks @ file:///C:/ci_310/pysocks_1642089375450/work
+python-dateutil @ file:///tmp/build/80754af9/python-dateutil_1626374649649/work
+pytz==2022.7.1
+pywin32==305
+PyYAML==6.0
+requests==2.28.2
+requires.io==0.2.6
+resource-backed-dask-array==0.1.0
+scipy==1.10.0
+screeninfo==0.8.1
+sip @ file:///C:/Windows/Temp/abs_b8fxd17m2u/croots/recipe/sip_1659012372737/work
+six @ file:///tmp/build/80754af9/six_1644875935023/work
+slicerator @ file:///home/conda/feedstock_root/build_artifacts/slicerator_1649451685407/work
+tifffile @ file:///home/conda/feedstock_root/build_artifacts/tifffile_1617956128193/work
+toml @ file:///tmp/build/80754af9/toml_1616166611790/work
+toolz==0.12.0
+tornado @ file:///C:/ci/tornado_1662476985533/work
+typing_extensions==4.5.0
+urllib3==1.26.15
+win-inet-pton @ file:///C:/ci_310/win_inet_pton_1642658466512/work
+wincertstore==0.2
+xmltodict @ file:///home/conda/feedstock_root/build_artifacts/xmltodict_1652020822199/work

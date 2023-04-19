@@ -1,3 +1,8 @@
+#!
+#this file needs only for checking some parts of the code, does not participate in the program
+#!
+#!
+
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 from nd2reader import ND2Reader

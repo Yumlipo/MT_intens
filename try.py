@@ -1,3 +1,8 @@
+#!
+#this file needs only for checking some parts of the code, does not participate in the program
+#!
+#!
+
 import cv2
 from screeninfo import get_monitors
 import numpy as np
