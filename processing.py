@@ -1,9 +1,6 @@
 import numpy as np
-from math import factorial
 from scipy import signal
 import matplotlib.pyplot as plt
-from scipy.interpolate import splrep, BSpline
-from scipy import stats
 
 from scipy.optimize import curve_fit
 from scipy import asarray as ar,exp
@@ -93,8 +90,7 @@ def get_tau(IminusBG, t):
     return round(param_optimised[1]), round(param_optimised[0])
 
 #I don't rotate each img from stack, I’m just taking every pixel between the lines that define the rectangle
-def int_from_rect(crds, img_process):
-    x1, y1, x2, y2 = crds
+def int_from_rect(x1, y1, x2, y2, img_process):
     l = math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
 
     if x2 < x1:

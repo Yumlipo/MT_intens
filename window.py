@@ -10,7 +10,11 @@ def Mbox(title, text, style):
     return ctypes.windll.user32.MessageBoxW(0, text, title, style)
 
 message = "    To highlight a microtube, double click on one of its ends\n and then double click on the other.\n You can also highlight another MT.\n Press Enter for further processing."
-Mbox('Program usage rules', message, 1)
+# Mbox('Program usage rules', message, 1)
+img_path = input('Enter the picture path \n')
+stack_path = input('Enter the stack path \n')
+
+#C:\\Users\\YummyPolly\\Documents\\LAB\\02-04-2023\\MED_TIRF_10laser_1to5_labe.jpg
 
 SELECT = 0
 screen = get_monitors()
@@ -48,7 +52,7 @@ def mouse_action(event, x, y, flags, param):
             selected_img = img_rotated[y3:y4, x3:x4].copy()
             cv2.rectangle(img_rotated, (x3, y3), (x4, y4), (255, 255, 0), 1)#draw rectangle on full img
 
-            cv2.imshow("Selected Image "+ str(i), selected_img)
+            cv2.imshow("Selected Image " + str(i), selected_img)
 
             # cv2.rectangle(selected_img, (0, 0), (8, 8), (255, 255, 255), 1)
             #Intensity from z-project
@@ -59,6 +63,7 @@ def mouse_action(event, x, y, flags, param):
             cv2.imshow("Img rotated " + str(i), img_rotated)
             #counter of MT
             i += 1
+
         else:#We are here if it is the first click
             crds_tmp = np.append(crds_tmp, [x, y])  # save click coordinates
             crds = np.append(crds, [x, y])
@@ -75,6 +80,15 @@ def get_crds(crds_tmp):#Get coordinats and ratation matrix to make the picture h
     x1, y1, x2, y2 = crds_tmp
     l = math.sqrt((x1-x2)**2 + (y1-y2)**2)
 
+    if x2 < x1:
+        tmp = x1
+        x1 = x2
+        x2 = tmp
+
+        tmp = y1
+        y1 = y2
+        y2 = tmp
+
     ang = math.atan((y2-y1)/(x2-x1)) * 180 / math.pi
     M = cv2.getRotationMatrix2D((x1, y1), ang, 1.0)
 
@@ -85,7 +99,7 @@ def get_crds(crds_tmp):#Get coordinats and ratation matrix to make the picture h
 
 
 #------------change file name
-img_ori = cv2.imread("pics/1.jpg")
+img_ori = cv2.imread(img_path)
 
 cv2.namedWindow('Z project', cv2.WINDOW_FULLSCREEN)
 cv2.moveWindow('Z project', int(0.1 * work_area[0]), int(0.1 * work_area[1]))
@@ -99,6 +113,5 @@ selected_img = []
 union_img = []
 cv2.imshow("Z project", img)
 I = np.array([])
-
 
 cv2.setMouseCallback('Z project', mouse_action)
