@@ -11,10 +11,12 @@ def Mbox(title, text, style):
 
 message = "    To highlight a microtube, double click on one of its ends\n and then double click on the other.\n You can also highlight another MT.\n Press Enter for further processing."
 # Mbox('Program usage rules', message, 1)
-img_path = input('Enter the picture path \n')
-stack_path = input('Enter the stack path \n')
+# img_path = input('Enter the picture path \n')
+# stack_path = input('Enter the stack path \n')
 
-#C:\\Users\\YummyPolly\\Documents\\LAB\\02-04-2023\\MED_TIRF_10laser_1to5_labe.jpg
+img_path = 'C:\\Users\\YummyPolly\\Documents\\LAB\\02-04-2023\\TIRF_10laser_1to5_labe.jpg'
+stack_path = 'C:\\Users\\YummyPolly\\Documents\\LAB\\02-04-2023\\TIRF_10laser_1to5_labe.nd2'
+#C:\\Users\\YummyPolly\\Documents\\LAB\\02-04-2023\\TIRF_10laser_1to5_labe.jpg
 
 SELECT = 0
 screen = get_monitors()
@@ -101,7 +103,7 @@ def get_crds(crds_tmp):#Get coordinats and ratation matrix to make the picture h
 #------------change file name
 img_ori = cv2.imread(img_path)
 
-cv2.namedWindow('Z project', cv2.WINDOW_FULLSCREEN)
+cv2.namedWindow('Z project', cv2.WINDOW_NORMAL)
 cv2.moveWindow('Z project', int(0.1 * work_area[0]), int(0.1 * work_area[1]))
 win = cv2.getWindowImageRect("Z project")
 

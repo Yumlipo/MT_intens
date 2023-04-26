@@ -15,7 +15,7 @@ def Mbox(title, text, style):
     return ctypes.windll.user32.MessageBoxW(0, text, title, style)
 
 message = "    To highlight a point, press it with a double click.\n    Once you select a point, click next to the background to compare the intensity for it.\n    You can select several points. Do not forget for all of them to select a pair with background immediately.\n    After you have selected all the points, press the Enter for further processing."
-# Mbox('Program usage rules', message, 1)
+Mbox('Program usage rules', message, 1)
 
 SELECT = 0
 screen = get_monitors()

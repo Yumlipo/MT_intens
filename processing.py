@@ -10,8 +10,8 @@ import math
 def gauss(x, C, x_mean, sigma):
     return C * exp(-(x - x_mean) ** 2 / (2 * sigma ** 2))
 
-def exp_fit(x, A, tau):
-    return A * exp(-x/tau)
+def exp_fit(x, A, tau, y0):
+    return A * exp(-x/tau) + y0
 
 #sliding window data smoothing
 def smoothing(y, flag):
@@ -69,7 +69,7 @@ def draw_results_and_param(IminusBG_arr, I_point_arr, I_BG_arr):
         I_point_arr[i] = smoothing(I_point_arr[i], 0)
         I_BG_arr[i] = smoothing(I_BG_arr[i], 0)
 
-        param_t, param_I = get_tau(IminusBG_arr[i].flatten(), t)
+        param_t, param_I, y0 = get_tau(IminusBG_arr[i].flatten(), t)
         tau = np.append(tau, param_t)
         I0 = np.append(I0, param_I)
 
@@ -77,7 +77,7 @@ def draw_results_and_param(IminusBG_arr, I_point_arr, I_BG_arr):
         ax.plot(t, IminusBG_arr[i], label="I(MT) - I(BG) " + str(i + 1))
         ax.plot(t, I_point_arr[i], label="MT " + str(i + 1))
         ax.plot(t, I_BG_arr[i], label="BG " + str(i + 1))
-        ax.plot(t, exp_fit(t, param_I, param_t), label='Exp fit')
+        ax.plot(t, exp_fit(t, param_I, param_t, y0), label='Exp fit')
         ax.set_xlabel('frames, x ms')
         ax.set_ylabel('I')
         ax.set_title("Signal to noise from time for №" + str(i + 1) + " MT")
@@ -86,8 +86,8 @@ def draw_results_and_param(IminusBG_arr, I_point_arr, I_BG_arr):
     return tau, I0
 
 def get_tau(IminusBG, t):
-    param_optimised, param_covariance_matrix = curve_fit(exp_fit, t, IminusBG, p0=[10, 100], maxfev = 5000)
-    return round(param_optimised[1]), round(param_optimised[0])
+    param_optimised, param_covariance_matrix = curve_fit(exp_fit, t, IminusBG, p0=[10, 100, 20], maxfev = 5000)
+    return round(param_optimised[1]), round(param_optimised[0]), round(param_optimised[2])
 
 #I don't rotate each img from stack, I’m just taking every pixel between the lines that define the rectangle
 def int_from_rect(x1, y1, x2, y2, img_process):

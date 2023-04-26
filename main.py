@@ -54,9 +54,15 @@ while cv2.getWindowProperty("Z project", cv2.WND_PROP_VISIBLE) > 0:
         print("tau, I0", tau, I0)
 
         #Save our results in file
-        np.savetxt('params.txt', (tau, I0))
-        np.savetxt('crds.txt', window.crds)
-        np.savetxt('I_BG(t).txt', IminusBG_arr)
+        with open("params.txt", "ab") as f:
+            np.savetxt(f, np.concatenate((np.vstack(tau), np.vstack(I0)), axis=1))
+        with open("crds.txt", "ab") as f:
+            np.savetxt(f, window.crds)
+        with open("I-BG(t).txt", "ab") as f:
+            np.savetxt(f, IminusBG_arr)
+        # np.savetxt('params.txt', (tau, I0))
+        # np.savetxt('crds.txt', window.crds)
+        # np.savetxt('I_BG(t).txt', IminusBG_arr)
         plt.show()
 
             # for I in IminusBG_arr:
