@@ -12,7 +12,7 @@ import processing
 #Open ND2 file
 stack = ND2Reader(window.stack_path)
 # plt.imshow(stack[5])
-print(stack.metadata)
+#print(stack.metadata)
 # plt.show()
 
 
@@ -50,18 +50,18 @@ while cv2.getWindowProperty("Z project", cv2.WND_PROP_VISIBLE) > 0:
         # I_BG_arr[I_BG_arr != I_BG_arr.mean()] = I_BG_arr.mean()
 
         #Get grafc I(t) and get tau fron fitting
-        tau, I0, y0, param_cov = processing.draw_results_and_param(IminusBG_arr, I_point_arr, I_BG_arr)
+        tau, I0, y0, param_cov = processing.draw_results_and_param(IminusBG_arr, I_point_arr, I_BG_arr, window.output_dir)
         print("tau, I0, y0", tau, I0, y0)
         print("param_covariance_matrix", param_cov)
 
         #Save our results in file
-        with open("params.txt", "ab") as f:
-            np.savetxt(f, np.concatenate((np.vstack(tau), np.vstack(I0), np.vstack(y0)), axis=1))
-        with open("error.txt", "ab") as f:
-            np.savetxt(f, np.stack(np.array([param_cov]), axis=0))
-        with open("crds.txt", "ab") as f:
+        with open(window.output_dir + "params.txt", "wb") as f:
+            np.savetxt(f, np.stack([tau, I0, y0], axis=1))
+        with open(window.output_dir + "error.txt", "wb") as f:
+            np.savetxt(f, param_cov)
+        with open(window.output_dir + "crds.txt", "wb") as f:
             np.savetxt(f, window.crds)
-        with open("I-BG(t).txt", "ab") as f:
+        with open(window.output_dir + "I-BG(t).txt", "wb") as f:
             np.savetxt(f, IminusBG_arr)
         # np.savetxt('params.txt', (tau, I0))
         # np.savetxt('crds.txt', window.crds)
