@@ -1,3 +1,4 @@
+import os
 import cv2
 from screeninfo import get_monitors
 import numpy as np
@@ -11,11 +12,19 @@ def Mbox(title, text, style):
 
 message = "    To highlight a microtube, double click on one of its ends\n and then double click on the other.\n You can also highlight another MT.\n Press Enter for further processing."
 # Mbox('Program usage rules', message, 1)
-# img_path = input('Enter the picture path \n')
-# stack_path = input('Enter the stack path \n')
+img_path = input('Input the picture path \n')
+stack_path = input('Input the stack path or press Enter for auto\n')
+if stack_path == "":
+    stack_path = os.path.splitext(img_path)[0] + ".nd2"
 
-img_path = "D:\\lab\\F-23\\20_100\\AVG_9_TIRF_20ms_100%_999_5x.jpg"
-stack_path = "D:\\lab\\F-23\\20_100\\9_TIRF_20ms_100%_999_5x.nd2"
+video_name = os.path.splitext(os.path.basename(img_path))[0]
+output_dir = "output/" + video_name + "/"
+os.makedirs(output_dir, exist_ok=True)
+
+print(output_dir, stack_path)
+
+#img_path = "D:\\lab\\F-23\\20_100\\AVG_9_TIRF_20ms_100%_999_5x.jpg"
+#stack_path = "D:\\lab\\F-23\\20_100\\9_TIRF_20ms_100%_999_5x.nd2"
 #C:\\Users\\YummyPolly\\Documents\\LAB\\02-04-2023\\TIRF_10laser_1to5_labe.jpg
 
 SELECT = 0
@@ -54,7 +63,8 @@ def mouse_action(event, x, y, flags, param):
             selected_img = img_rotated[y3:y4, x3:x4].copy()
             cv2.rectangle(img_rotated, (x3, y3), (x4, y4), (255, 255, 0), 1)#draw rectangle on full img
 
-            cv2.imshow("Selected Image " + str(i), selected_img)
+            cv2.imshow(f"Selected Image {i}", selected_img)
+            cv2.imwrite(output_dir + f"selected_image_{i}.jpg", selected_img)
 
             # cv2.rectangle(selected_img, (0, 0), (8, 8), (255, 255, 255), 1)
             #Intensity from z-project
@@ -63,6 +73,7 @@ def mouse_action(event, x, y, flags, param):
             crds_tmp = np.array([])
 
             cv2.imshow("Img rotated " + str(i), img_rotated)
+            cv2.imwrite(output_dir + f"rotated_image_{i}.jpg", img_rotated)
             #counter of MT
             i += 1
 

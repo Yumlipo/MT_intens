@@ -1,6 +1,7 @@
 import numpy as np
 from scipy import signal
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 from scipy.optimize import curve_fit
 from scipy import asarray as ar,exp
@@ -51,12 +52,12 @@ def myhist(arr):
     # plt.plot(bins, gauss(bins, param_optimised[0], param_optimised[1], param_optimised[2]), label='Gaussian fit')
 
 #Draw I(t) and get tau parametr from fitting this dependence
-def draw_results_and_param(IminusBG_arr, I_point_arr, I_BG_arr):
+def draw_results_and_param(IminusBG_arr, I_point_arr, I_BG_arr, output_dir):
     # num_of_points = IminusBG_arr.shape[1]
     tau = np.array([])
     I0 = np.array([])
     y0 = np.array([])
-    param_cov = np.array([])
+    param_cov = []
     t = np.linspace(0, IminusBG_arr.shape[1], IminusBG_arr.shape[1])
 
     # for i in range(IminusBG_arr.shape[0]):
@@ -75,17 +76,23 @@ def draw_results_and_param(IminusBG_arr, I_point_arr, I_BG_arr):
         tau = np.append(tau, param_t)
         I0 = np.append(I0, param_I)
         y0 = np.append(y0, param_y0)
-        param_cov =  np.append(param_cov, param_covariance_matrix)
+        param_cov.append(param_covariance_matrix)
 
-        fig, ax = plt.subplots()
-        ax.plot(t, IminusBG_arr[i], label="I(MT) - I(BG) " + str(i + 1))
-        ax.plot(t, I_point_arr[i], label="MT " + str(i + 1))
-        ax.plot(t, I_BG_arr[i], label="BG " + str(i + 1))
-        ax.plot(t, exp_fit(t, param_I, param_t, param_y0), label='Exp fit')
-        ax.set_xlabel('frames, x ms')
-        ax.set_ylabel('I')
-        ax.set_title("Signal to noise from time for №" + str(i + 1) + " MT")
-        ax.legend()
+        fig, axes = plt.subplots(2, 1, figsize=(6, 8), sharex=True)
+        axes[0].plot(t, I_point_arr[i], label="MT " + str(i + 1))
+        axes[0].plot(t, I_BG_arr[i], label="BG " + str(i + 1))
+        axes[0].legend()
+        axes[0].set_xlabel('frames, x ms')
+        axes[0].set_ylabel('I')
+        axes[1].plot(t, IminusBG_arr[i], label="I(MT) - I(BG) " + str(i + 1), color=sns.color_palette()[2])
+        axes[1].plot(t, exp_fit(t, param_I, param_t, param_y0), label='Exp fit', color=sns.color_palette()[3])
+        axes[1].legend()
+        axes[1].set_xlabel('frames, x ms')
+        axes[1].set_ylabel('$\\Delta$I')
+        plt.suptitle("Signal to noise from time for №" + str(i + 1) + " MT")
+        fig.savefig(output_dir + f"figure_{i}.pdf", bbox_inches="tight")
+       
+    param_cov = np.stack(param_cov, axis=0)
 
     return tau, I0, y0, param_cov
 
