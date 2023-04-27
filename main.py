@@ -50,12 +50,15 @@ while cv2.getWindowProperty("Z project", cv2.WND_PROP_VISIBLE) > 0:
         # I_BG_arr[I_BG_arr != I_BG_arr.mean()] = I_BG_arr.mean()
 
         #Get grafc I(t) and get tau fron fitting
-        tau, I0 = processing.draw_results_and_param(IminusBG_arr, I_point_arr, I_BG_arr)
-        print("tau, I0", tau, I0)
+        tau, I0, y0, param_cov = processing.draw_results_and_param(IminusBG_arr, I_point_arr, I_BG_arr)
+        print("tau, I0, y0", tau, I0, y0)
+        print("param_covariance_matrix", param_cov)
 
         #Save our results in file
         with open("params.txt", "ab") as f:
-            np.savetxt(f, np.concatenate((np.vstack(tau), np.vstack(I0)), axis=1))
+            np.savetxt(f, np.concatenate((np.vstack(tau), np.vstack(I0), np.vstack(y0)), axis=1))
+        with open("error.txt", "ab") as f:
+            np.savetxt(f, np.stack(np.array([param_cov]), axis=0))
         with open("crds.txt", "ab") as f:
             np.savetxt(f, window.crds)
         with open("I-BG(t).txt", "ab") as f:

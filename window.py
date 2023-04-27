@@ -14,8 +14,8 @@ message = "    To highlight a microtube, double click on one of its ends\n and t
 # img_path = input('Enter the picture path \n')
 # stack_path = input('Enter the stack path \n')
 
-img_path = 'C:\\Users\\YummyPolly\\Documents\\LAB\\02-04-2023\\TIRF_10laser_1to5_labe.jpg'
-stack_path = 'C:\\Users\\YummyPolly\\Documents\\LAB\\02-04-2023\\TIRF_10laser_1to5_labe.nd2'
+img_path = "D:\\lab\\F-23\\20_100\\AVG_9_TIRF_20ms_100%_999_5x.jpg"
+stack_path = "D:\\lab\\F-23\\20_100\\9_TIRF_20ms_100%_999_5x.nd2"
 #C:\\Users\\YummyPolly\\Documents\\LAB\\02-04-2023\\TIRF_10laser_1to5_labe.jpg
 
 SELECT = 0

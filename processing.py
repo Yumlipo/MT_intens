@@ -55,6 +55,8 @@ def draw_results_and_param(IminusBG_arr, I_point_arr, I_BG_arr):
     # num_of_points = IminusBG_arr.shape[1]
     tau = np.array([])
     I0 = np.array([])
+    y0 = np.array([])
+    param_cov = np.array([])
     t = np.linspace(0, IminusBG_arr.shape[1], IminusBG_arr.shape[1])
 
     # for i in range(IminusBG_arr.shape[0]):
@@ -69,25 +71,27 @@ def draw_results_and_param(IminusBG_arr, I_point_arr, I_BG_arr):
         I_point_arr[i] = smoothing(I_point_arr[i], 0)
         I_BG_arr[i] = smoothing(I_BG_arr[i], 0)
 
-        param_t, param_I, y0 = get_tau(IminusBG_arr[i].flatten(), t)
+        param_t, param_I, param_y0, param_covariance_matrix = get_tau(IminusBG_arr[i].flatten(), t)
         tau = np.append(tau, param_t)
         I0 = np.append(I0, param_I)
+        y0 = np.append(y0, param_y0)
+        param_cov =  np.append(param_cov, param_covariance_matrix)
 
         fig, ax = plt.subplots()
         ax.plot(t, IminusBG_arr[i], label="I(MT) - I(BG) " + str(i + 1))
         ax.plot(t, I_point_arr[i], label="MT " + str(i + 1))
         ax.plot(t, I_BG_arr[i], label="BG " + str(i + 1))
-        ax.plot(t, exp_fit(t, param_I, param_t, y0), label='Exp fit')
+        ax.plot(t, exp_fit(t, param_I, param_t, param_y0), label='Exp fit')
         ax.set_xlabel('frames, x ms')
         ax.set_ylabel('I')
         ax.set_title("Signal to noise from time for №" + str(i + 1) + " MT")
         ax.legend()
 
-    return tau, I0
+    return tau, I0, y0, param_cov
 
 def get_tau(IminusBG, t):
     param_optimised, param_covariance_matrix = curve_fit(exp_fit, t, IminusBG, p0=[10, 100, 20], maxfev = 5000)
-    return round(param_optimised[1]), round(param_optimised[0]), round(param_optimised[2])
+    return round(param_optimised[1]), round(param_optimised[0]), round(param_optimised[2]), np.sqrt(np.diag(param_covariance_matrix))
 
 #I don't rotate each img from stack, I’m just taking every pixel between the lines that define the rectangle
 def int_from_rect(x1, y1, x2, y2, img_process):
