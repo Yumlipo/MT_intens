@@ -1,3 +1,5 @@
+import math
+
 import cv2
 import numpy as np
 from nd2reader import ND2Reader
@@ -31,42 +33,51 @@ while cv2.getWindowProperty("Z project", cv2.WND_PROP_VISIBLE) > 0:
         print("I in main")
 
         #for each picture in ND2 stack calculate intensity
-        for img_for in stack:
-            I_point_temp = np.array([])
-            I_BG_temp = np.array([])
+        if (window.BG_params.shape[0] % 4) > 0:
+            window.Mbox("Warning", "You need to select a background! Now you have an odd number of coordinates.", 1)
+            break
+        else:
+            for img_for in stack:
+                I_point_temp = np.array([])
+                I_BG_temp = np.array([])
 
-            # print("Img", img)
-            for x1, y1, x2, y2 in zip(window.crds[::4], window.crds[1::4], window.crds[2::4], window.crds[3::4]):
-                I_point_temp = np.append(I_point_temp, processing.int_from_rect(x1, y1, x2, y2, img_for))
-                I_BG_temp = np.append(I_BG_temp, processing.int_from_rect(x1+10, y1+10, x2+10, y2+10, img_for))
-            #these are full arrays of intensity depending on the time for BG and MT
-            I_point += [I_point_temp]
-            I_BG += [I_BG_temp]
-            mean_BG = sum(I_BG) / len(I_BG)
-            IminusBG += [I_point_temp - I_BG_temp]
-        IminusBG_arr = np.stack(IminusBG, axis=1)
-        I_point_arr = np.stack(I_point, axis=1)
-        I_BG_arr = np.stack(I_BG, axis=1)
-        # I_BG_arr[I_BG_arr != I_BG_arr.mean()] = I_BG_arr.mean()
+                # print("Img", img)
+                for x1, y1, x2, y2 in zip(window.crds[::4], window.crds[1::4], window.crds[2::4], window.crds[3::4]):
+                    I_point_temp = np.append(I_point_temp, processing.int_from_rect(x1, y1, x2, y2, img_for))
+                for a, l, x, y in zip(window.BG_params[::4], window.BG_params[1::4], window.BG_params[2::4], window.BG_params[3::4]):
+                    x2 = round(l / math.sqrt(1 + a ** 2) + x)
+                    y2 = round(a*x2+y-a*x)
+                    I_BG_temp = np.append(I_BG_temp, processing.int_from_rect(x, y, x2, y2, img_for))
+                #these are full arrays of intensity depending on the time for BG and MT
+                I_point += [I_point_temp]
+                I_BG += [I_BG_temp]
+                mean_BG = sum(I_BG) / len(I_BG)
+                IminusBG += [I_point_temp - I_BG_temp]
+            IminusBG_arr = np.stack(IminusBG, axis=1)
+            I_point_arr = np.stack(I_point, axis=1)
+            I_BG_arr = np.stack(I_BG, axis=1)
+            # I_BG_arr[I_BG_arr != I_BG_arr.mean()] = I_BG_arr.mean()
 
-        #Get grafc I(t) and get tau fron fitting
-        tau, I0, y0, param_cov = processing.draw_results_and_param(IminusBG_arr, I_point_arr, I_BG_arr, window.output_dir)
-        print("tau, I0, y0", tau, I0, y0)
-        print("param_covariance_matrix", param_cov)
+            #Get grafc I(t) and get tau fron fitting
+            tau, I0, y0, param_cov = processing.draw_results_and_param(IminusBG_arr, I_point_arr, I_BG_arr, window.output_dir)
+            print("tau, I0, y0", tau, I0, y0)
+            print("param_covariance_matrix", param_cov)
 
-        #Save our results in file
-        with open(window.output_dir + "params.txt", "wb") as f:
-            np.savetxt(f, np.stack([tau, I0, y0], axis=1))
-        with open(window.output_dir + "error.txt", "wb") as f:
-            np.savetxt(f, param_cov)
-        with open(window.output_dir + "crds.txt", "wb") as f:
-            np.savetxt(f, window.crds)
-        with open(window.output_dir + "I-BG(t).txt", "wb") as f:
-            np.savetxt(f, IminusBG_arr)
-        # np.savetxt('params.txt', (tau, I0))
-        # np.savetxt('crds.txt', window.crds)
-        # np.savetxt('I_BG(t).txt', IminusBG_arr)
-        plt.show()
+            #Save our results in file
+            with open(window.output_dir + "params.txt", "wb") as f:
+                np.savetxt(f, np.stack([tau, I0, y0], axis=1))
+            with open(window.output_dir + "error.txt", "wb") as f:
+                np.savetxt(f, param_cov)
+            with open(window.output_dir + "crds.txt", "wb") as f:
+                np.savetxt(f, window.crds)
+            with open(window.output_dir + "BG_params.txt", "wb") as f:
+                np.savetxt(f, window.BG_params)
+            with open(window.output_dir + "I-BG(t).txt", "wb") as f:
+                np.savetxt(f, IminusBG_arr)
+            # np.savetxt('params.txt', (tau, I0))
+            # np.savetxt('crds.txt', window.crds)
+            # np.savetxt('I_BG(t).txt', IminusBG_arr)
+            plt.show()
 
             # for I in IminusBG_arr:
             #     processing.hist(I)

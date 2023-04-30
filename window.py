@@ -23,8 +23,8 @@ os.makedirs(output_dir, exist_ok=True)
 
 print(output_dir, stack_path)
 
-#img_path = "D:\\lab\\F-23\\20_100\\AVG_9_TIRF_20ms_100%_999_5x.jpg"
-#stack_path = "D:\\lab\\F-23\\20_100\\9_TIRF_20ms_100%_999_5x.nd2"
+# img_path = "D:\\lab\\F-23\\20_100\\AVG_9_TIRF_20ms_100%_999_5x.jpg"
+# stack_path = "D:\\lab\\F-23\\20_100\\9_TIRF_20ms_100%_999_5x.nd2"
 #C:\\Users\\YummyPolly\\Documents\\LAB\\02-04-2023\\TIRF_10laser_1to5_labe.jpg
 
 SELECT = 0
@@ -37,9 +37,11 @@ for monitor in get_monitors():
     print(str(work_area[0]) + 'x' + str(work_area[1]))
 
 crds_tmp = np.array([])
+BG_params = np.array([])
 crds = np.array([])
 i=1
 M = np.array([])
+flag_BG = 0
 
 #This is our rectangle
 #    (x3, y3)------------------------(x6, y6)
@@ -49,14 +51,20 @@ M = np.array([])
 #    (x5, y5)------------------------(x4, y4)
 
 def mouse_action(event, x, y, flags, param):
-    global crds, crds_tmp, img, selected_img, union_img, img_ori, SELECT, I, i, M
-
+    global crds, crds_tmp, BG_params, img, selected_img, union_img, img_ori, SELECT, I, i, M, flag_BG
     if event == cv2.EVENT_LBUTTONDBLCLK:
-        if crds_tmp.shape[0] == 2:#This is second click, so we need process selected MT
+        if flag_BG == 2:
+            flag_BG = 0
+
+        if flag_BG == 1:
+            BG_params = np.append(BG_params, [x, y])
+            flag_BG = 2
+
+        if crds_tmp.shape[0] == 2 and flag_BG == 0:#This is second click, so we need process selected MT
             #crds_tmp store the time coordinates for only one MT, and crds store all the coordinates of all the allocated MT
             crds_tmp = np.append(crds_tmp, [x, y])
             crds = np.append(crds, [x, y])
-            x3, y3, x4, y4, ang, M = get_crds(crds_tmp)
+            x3, y3, x4, y4, ang, M, a, l = get_crds(crds_tmp)
             img_rotated = cv2.warpAffine(img, M, (img_ori_w, img_ori_h))
             # cv2.imshow("Rotated by 45 Degrees", rotated)
             # copy selected area from rotated picture
@@ -76,10 +84,16 @@ def mouse_action(event, x, y, flags, param):
             cv2.imwrite(output_dir + f"rotated_image_{i}.jpg", img_rotated)
             #counter of MT
             i += 1
+            flag_BG = 1
 
-        else:#We are here if it is the first click
+            BG_params = np.append(BG_params, [a, l])
+
+            message = "Please double click where you want to get the background."
+            Mbox('Select backgroung', message, 1)
+        elif flag_BG == 0:#We are here if it is the first click
             crds_tmp = np.append(crds_tmp, [x, y])  # save click coordinates
             crds = np.append(crds, [x, y])
+
     cv2.imshow("Z project", img)
 
 def calculate_I(sel_img):
@@ -102,13 +116,15 @@ def get_crds(crds_tmp):#Get coordinats and ratation matrix to make the picture h
         y1 = y2
         y2 = tmp
 
+
+    a = (y2 - y1) / (x2 - x1)
     ang = math.atan((y2-y1)/(x2-x1)) * 180 / math.pi
     M = cv2.getRotationMatrix2D((x1, y1), ang, 1.0)
 
     x2_new = x1 + l
     y2_new = y1
 #return x3, y3, x4, y4, ang and M
-    return int(x1), int(y1-3), int(x2_new), int(y2_new+3), ang, M
+    return int(x1), int(y1-3), int(x2_new), int(y2_new+3), ang, M, a, l
 
 
 #------------change file name
