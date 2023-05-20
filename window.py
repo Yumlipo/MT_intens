@@ -26,6 +26,7 @@ print(output_dir, stack_path)
 # img_path = "D:\\lab\\F-23\\20_100\\AVG_9_TIRF_20ms_100%_999_5x.jpg"
 # stack_path = "D:\\lab\\F-23\\20_100\\9_TIRF_20ms_100%_999_5x.nd2"
 #C:\\Users\\YummyPolly\\Documents\\LAB\\02-04-2023\\TIRF_10laser_1to5_labe.jpg
+#C:\\Users\\YummyPolly\\Documents\\LAB\\08-04-2023\\25pc_optovar_1.5x_exp001.jpg
 
 SELECT = 0
 screen = get_monitors()
@@ -51,13 +52,14 @@ flag_BG = 0
 #    (x5, y5)------------------------(x4, y4)
 
 def mouse_action(event, x, y, flags, param):
-    global crds, crds_tmp, BG_params, img, selected_img, union_img, img_ori, SELECT, I, i, M, flag_BG
+    global crds, crds_tmp, BG_params, img, selected_img, union_img, img_ori, SELECT, I, i, M, flag_BG, a, l
     if event == cv2.EVENT_LBUTTONDBLCLK:
         if flag_BG == 2:
             flag_BG = 0
 
         if flag_BG == 1:
             BG_params = np.append(BG_params, [x, y])
+            img = draw_line(BG_params[-2], BG_params[-1], a, l, img)
             flag_BG = 2
 
         if crds_tmp.shape[0] == 2 and flag_BG == 0:#This is second click, so we need process selected MT
@@ -65,13 +67,14 @@ def mouse_action(event, x, y, flags, param):
             crds_tmp = np.append(crds_tmp, [x, y])
             crds = np.append(crds, [x, y])
             x3, y3, x4, y4, ang, M, a, l = get_crds(crds_tmp)
+
             img_rotated = cv2.warpAffine(img, M, (img_ori_w, img_ori_h))
             # cv2.imshow("Rotated by 45 Degrees", rotated)
             # copy selected area from rotated picture
             selected_img = img_rotated[y3:y4, x3:x4].copy()
             cv2.rectangle(img_rotated, (x3, y3), (x4, y4), (255, 255, 0), 1)#draw rectangle on full img
 
-            cv2.imshow(f"Selected Image {i}", selected_img)
+            # cv2.imshow(f"Selected Image {i}", selected_img)
             cv2.imwrite(output_dir + f"selected_image_{i}.jpg", selected_img)
 
             # cv2.rectangle(selected_img, (0, 0), (8, 8), (255, 255, 255), 1)
@@ -80,7 +83,7 @@ def mouse_action(event, x, y, flags, param):
             #clear crds_tmp becous we are done with this MT
             crds_tmp = np.array([])
 
-            cv2.imshow("Img rotated " + str(i), img_rotated)
+            # cv2.imshow("Img rotated " + str(i), img_rotated)
             cv2.imwrite(output_dir + f"rotated_image_{i}.jpg", img_rotated)
             #counter of MT
             i += 1
@@ -89,12 +92,17 @@ def mouse_action(event, x, y, flags, param):
             BG_params = np.append(BG_params, [a, l])
 
             message = "Please double click where you want to get the background."
-            Mbox('Select backgroung', message, 1)
+            # Mbox('Select backgroung', message, 1)
         elif flag_BG == 0:#We are here if it is the first click
             crds_tmp = np.append(crds_tmp, [x, y])  # save click coordinates
             crds = np.append(crds, [x, y])
 
     cv2.imshow("Z project", img)
+
+def draw_line(x1,y1, a, l, img):
+    x2 = round(l / math.sqrt(1 + a ** 2) + x1)
+    y2 = round(a * x2 + y1 - a * x1)
+    return cv2.line(img, (int(x1), int(y1)), (int(x2), int(y2)), (255, 255, 0), 1)
 
 def calculate_I(sel_img):
     Intens = 0

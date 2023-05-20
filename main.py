@@ -9,6 +9,7 @@ import window
 import processing
 
 # processing.smoothing(1, 0)
+#C:\\Users\\YummyPolly\\Documents\\LAB\\08-04-2023\\2023 04 08 diode photobleaching\\DOL1to300__50ms_100pc_optovar_1.5x_exp003.jpg
 
 
 #Open ND2 file
@@ -47,6 +48,7 @@ while cv2.getWindowProperty("Z project", cv2.WND_PROP_VISIBLE) > 0:
                 for a, l, x, y in zip(window.BG_params[::4], window.BG_params[1::4], window.BG_params[2::4], window.BG_params[3::4]):
                     x2 = round(l / math.sqrt(1 + a ** 2) + x)
                     y2 = round(a*x2+y-a*x)
+
                     I_BG_temp = np.append(I_BG_temp, processing.int_from_rect(x, y, x2, y2, img_for))
                 #these are full arrays of intensity depending on the time for BG and MT
                 I_point += [I_point_temp]
@@ -59,13 +61,12 @@ while cv2.getWindowProperty("Z project", cv2.WND_PROP_VISIBLE) > 0:
             # I_BG_arr[I_BG_arr != I_BG_arr.mean()] = I_BG_arr.mean()
 
             #Get grafc I(t) and get tau fron fitting
-            tau, I0, y0, param_cov = processing.draw_results_and_param(IminusBG_arr, I_point_arr, I_BG_arr, window.output_dir)
-            print("tau, I0, y0", tau, I0, y0)
-            print("param_covariance_matrix", param_cov)
-
+            tau, I0, param_cov = processing.draw_results_and_param(IminusBG_arr, I_point_arr, I_BG_arr, window.output_dir)
+            print("tau, I0, y0", tau, I0)
+            # C:\\Users\\YummyPolly\\Documents\\LAB\\13.05.2023_new\\maxintsl_100ms_999x_1to9_label.jpg
             #Save our results in file
             with open(window.output_dir + "params.txt", "wb") as f:
-                np.savetxt(f, np.stack([tau, I0, y0], axis=1))
+                np.savetxt(f, np.stack([tau, I0], axis=1))
             with open(window.output_dir + "error.txt", "wb") as f:
                 np.savetxt(f, param_cov)
             with open(window.output_dir + "crds.txt", "wb") as f:
